@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: auth-api
+  datasource:
+    url: jdbc:mysql://localhost:3307/authdb
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
