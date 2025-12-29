@@ -20,5 +20,10 @@ public class UserListGetResponse {
         this.id = user.getId();
         this.userName = user.getUserName();
     }
+
+    public UserListGetResponse(Long id, String userName) {
+        this.id = id;
+        this.userName = userName;
+    }
 }
 

@@ -13,9 +13,4 @@ public class AuthApiApplication {
 		SpringApplication.run(AuthApiApplication.class, args);
 	}
 
-
-	@RequestMapping("/")
-	String home() {
-		return "Hello World";
-	}
 }

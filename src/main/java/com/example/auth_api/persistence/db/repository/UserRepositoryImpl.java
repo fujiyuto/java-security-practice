@@ -36,27 +36,51 @@ public class UserRepositoryImpl implements UserRepository {
         // データがなかった場合はNotFoundエラー
         UserEntity dbEntity = queryResult.orElseThrow(() -> new NotFoundException("User data not found."));
 
-        return this.toDomainEntity(dbEntity);
+        return toDomainEntity(dbEntity);
+    }
+
+    @Override
+    public User findByUserName(String userName) {
+        Optional<UserEntity> dbEntity = this.jpaRepo.findByUserName(userName);
+        UserEntity user = dbEntity.orElseThrow(() -> new NotFoundException("User data not found by username"));
+
+        return toDomainEntity(user);
     }
 
     @Override
     public User save(User user) {
         // 登録処理
-        UserEntity queryResult = this.jpaRepo.save(this.toDbEntity(user));
+        UserEntity queryResult = this.jpaRepo.save(toDbEntity(user));
 
-        
         if ( queryResult == null ) {
             throw new RuntimeException("Can't create user data.");
         }
 
         // 作成ユーザーデータ返却
-        return this.toDomainEntity(queryResult);
+        return toDomainEntity(queryResult);
     }
 
+    @Override
+    public boolean delete(Long id) {
+        this.jpaRepo.deleteById(id);
+
+        return true;
+    }
+
+    /**
+     * DBエンティティをドメインエンティティに変換
+     * @param dbEntity
+     * @return
+     */
     private User toDomainEntity(UserEntity dbEntity) {
-        return new User(dbEntity.getId(), dbEntity.getUserName(), dbEntity.getEmail(), dbEntity.getPassword(), dbEntity.getRole());
+        return User.createUser(dbEntity.getId(), dbEntity.getUserName(), dbEntity.getEmail(), dbEntity.getPassword(), dbEntity.getRole());
     }
 
+    /**
+     * ドメインエンティティをDBエンティティに変換
+     * @param user
+     * @return
+     */
     private UserEntity toDbEntity(User user) {
         UserEntity dbEntity = new UserEntity();
         dbEntity.setId(user.getId());
