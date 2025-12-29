@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -65,7 +66,7 @@ public class UserControllerTest {
                     .param("size", "3"))
                 .andExpectAll(
                     status().isOk(),
-                    content().contentType("application/json"),
+                    content().contentType(MediaType.APPLICATION_JSON),
                     jsonPath("$.content[0].id").value(4),
                     jsonPath("$.content[0].userName").value("test4"),
                     jsonPath("$.totalElements").value(5),
@@ -76,6 +77,27 @@ public class UserControllerTest {
                     jsonPath("$.last").value(true)
                 );
 
+    }
+
+    @Test
+    void ユーザー詳細取得処理_200レスポンス() throws Exception {
+        // 取得したいユーザーのID
+        long getUserId = 1L;
+
+        // テスト用データ
+        User testUser = User.createUser(getUserId, "test1", "test1@gmail.com", "password", "USER");
+
+        given(userService.getUser(getUserId)).willReturn(testUser);
+
+        mockMvc.perform(get("/api/users/{userId}", 1))
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.id").value(1),
+                    jsonPath("$.userName").value("test1"),
+                    jsonPath("$.email").value("test1@gmail.com"),
+                    jsonPath("$.role").value("USER")
+                );
     }
 
     // @Test
