@@ -11,16 +11,19 @@ import org.springframework.stereotype.Service;
 import com.example.auth_api.app.domain.model.User;
 import com.example.auth_api.app.domain.repository.UserRepository;
 import com.example.auth_api.exception.DatabaseException;
+import com.example.auth_api.util.JWTUtil;
 
 @Service
 public class UserService {
     // リポジトリクラス
     private final UserRepository userRepository;
+    private final JWTUtil jwtUtil;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, JWTUtil jwtUtil) {
         this.userRepository  = userRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     /**
@@ -55,16 +58,23 @@ public class UserService {
      * @param userName
      * @param email
      * @param password
-     * @return User
+     * @return String
      */
-    public User createUser(String userName, String email, String hadhedPassword) throws DatabaseException {
+    public String createUser(String userName, String email, String hadhedPassword) throws DatabaseException {
         logger.info("ユーザー登録処理: username={}, email={}", userName, email);
         // Userドメインエンティティ定義
         User user = User.createRegisterRequestUser(userName, email, hadhedPassword);
 
         User createdUser = userRepository.save(user);
 
-        return createdUser;
+        // JWTトークン発行
+        String token = jwtUtil.generateToken(
+            createdUser.getId().toString(), 
+            createdUser.getUserName(), 
+            "ADMIN".equals(createdUser.getRole())
+        );
+
+        return token;
     }
 
     public User editUser(Long id, String userName) {

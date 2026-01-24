@@ -21,6 +21,7 @@ import com.example.auth_api.api.dto.user.request.MailEditEmailRequest;
 import com.example.auth_api.api.dto.user.request.PasswordEditRequest;
 import com.example.auth_api.api.dto.user.request.UserCreateRequest;
 import com.example.auth_api.api.dto.user.request.UserEditRequest;
+import com.example.auth_api.api.dto.user.response.UserCreateResponse;
 import com.example.auth_api.api.dto.user.response.UserDetailGetResponse;
 import com.example.auth_api.api.dto.user.response.UserListGetResponse;
 import com.example.auth_api.app.domain.model.User;
@@ -75,10 +76,10 @@ public class UserController {
      * @return
      */
     @PostMapping(value="/users")
-    public ResponseEntity<String> registerUser(@RequestBody UserCreateRequest request) {
-        User result = userService.createUser(request.getUserName(), request.getEmail(), this.passwordEncoder.encode(request.getPassword()));
+    public ResponseEntity<UserCreateResponse> registerUser(@RequestBody UserCreateRequest request) {
+        String result = userService.createUser(request.getUserName(), request.getEmail(), this.passwordEncoder.encode(request.getPassword()));
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("OK");
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserCreateResponse(result));
     }
 
     /**

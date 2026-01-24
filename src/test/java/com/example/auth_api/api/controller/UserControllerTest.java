@@ -16,10 +16,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.auth_api.api.dto.user.request.UserCreateRequest;
 import com.example.auth_api.api.dto.user.response.UserListGetResponse;
 import com.example.auth_api.app.domain.model.User;
 import com.example.auth_api.app.service.UserService;
@@ -100,8 +103,29 @@ public class UserControllerTest {
                 );
     }
 
-    // @Test
-    // void ユーザー作成処理_201レスポンス() throws Exception {
-    //     UserCreateRequest request = new UserCreateRequest("test", "test@gmail.com", "password");
-    // }
+    @Test
+    void ユーザー作成処理_201レスポンス() throws Exception {
+        // 登録リクエストデータ
+        String userName = "test";
+        String email    = "test@gmail.com";
+        String password = "password";
+        String encodedPassword = passwordEncoder.encode(password);
+
+        // 登録リクエストオブジェクト
+        UserCreateRequest request = new UserCreateRequest(userName, email, password);
+
+        // 返却JWT
+        String jwtToken = "token";
+
+        given(userService.createUser(userName, email, encodedPassword)).willReturn(jwtToken);
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                    .andExpectAll(
+                        status().isCreated(),
+                        content().contentType(MediaType.APPLICATION_JSON),
+                        jsonPath("$.token").value(jwtToken)
+                    );
+    }
 }

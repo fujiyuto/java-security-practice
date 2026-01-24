@@ -11,3 +11,6 @@ spring:
       org:
         springframework:
           security: debug
+  jwt:
+    secret: sbSwWc4zpAMzw36bs6yOEz6MH4yD2oM6YDf1tW02zfw=
+    expiration: 54000
