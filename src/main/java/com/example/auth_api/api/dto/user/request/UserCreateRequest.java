@@ -8,8 +8,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class UserCreateRequest {
 
     /**
@@ -30,10 +32,4 @@ public class UserCreateRequest {
      */
     @NotBlank(message="パスワードを入力してください")
     private String password;
-
-    public UserCreateRequest(String userName, String email, String password) {
-        this.userName = userName;
-        this.email = email;
-        this.password = password;
-    }
 }

@@ -2,9 +2,11 @@ package com.example.auth_api.api.dto.user.response;
 
 import com.example.auth_api.app.domain.model.User;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class UserListGetResponse {
     /**
      * id
@@ -19,11 +21,6 @@ public class UserListGetResponse {
     public UserListGetResponse(User user) {
         this.id = user.getId();
         this.userName = user.getUserName();
-    }
-
-    public UserListGetResponse(Long id, String userName) {
-        this.id = id;
-        this.userName = userName;
     }
 }
 
